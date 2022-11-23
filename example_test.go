@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/levigross/grequests"
+	"github.com/flowingz/grequests"
 )
 
 func Example_basicGet() {
@@ -47,7 +47,13 @@ func Example_proxy() {
 	}
 
 	resp, err := grequests.Get("http://www.levigross.com/",
-		&grequests.RequestOptions{Proxies: map[string]*url.URL{proxyURL.Scheme: proxyURL}})
+		&grequests.RequestOptions{
+			HTTPClientOptions: grequests.HTTPClientOptions{
+				Transport: grequests.HTTPClientTransportOptions{
+					Proxies: map[string]*url.URL{proxyURL.Scheme: proxyURL},
+				},
+			},
+		})
 
 	if err != nil {
 		log.Println(err)
@@ -63,17 +69,21 @@ func Example_proxy() {
 func Example_cookies() {
 	resp, err := grequests.Get("http://httpbin.org/cookies",
 		&grequests.RequestOptions{
-			Cookies: []*http.Cookie{
-				{
-					Name:     "TestCookie",
-					Value:    "Random Value",
-					HttpOnly: true,
-					Secure:   false,
-				}, {
-					Name:     "AnotherCookie",
-					Value:    "Some Value",
-					HttpOnly: true,
-					Secure:   false,
+			HTTPClientOptions: grequests.HTTPClientOptions{
+				Jar: grequests.HTTPClientJarOptions{
+					Cookies: []*http.Cookie{
+						{
+							Name:     "TestCookie",
+							Value:    "Random Value",
+							HttpOnly: true,
+							Secure:   false,
+						}, {
+							Name:     "AnotherCookie",
+							Value:    "Some Value",
+							HttpOnly: true,
+							Secure:   false,
+						},
+					},
 				},
 			},
 		})
@@ -192,7 +202,13 @@ func Example_customHTTPHeader() {
 }
 
 func Example_acceptInvalidTLSCert() {
-	ro := &grequests.RequestOptions{InsecureSkipVerify: true}
+	ro := &grequests.RequestOptions{
+		HTTPClientOptions: grequests.HTTPClientOptions{
+			Transport: grequests.HTTPClientTransportOptions{
+				InsecureSkipVerify: true,
+			},
+		},
+	}
 	resp, err := grequests.Get("https://www.pcwebshop.co.uk/", ro)
 
 	if err != nil {
