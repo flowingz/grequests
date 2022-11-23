@@ -22,6 +22,15 @@ const (
 
 	// Default value for Request Timeout
 	requestTimeout = 90 * time.Second
+
+	// Default value for http.Transport MaxIdleConns
+	maxIdleConns = 100
+
+	// Default value for http.Transport MaxIdleConnsPerHost
+	maxIdleConnsPerHost = 2
+
+	// Default value for http.Transport IdleConnTimeout
+	idleConnTimeout = 90 * time.Second
 )
 
 var (
@@ -98,7 +107,7 @@ func EnsureTransporterFinalized(httpTransport *http.Transport) {
 }
 
 // EnsureResponseFinalized will ensure that when the Response is GCed
-// the request body is closed so we aren't leaking fds
+// the request body is closed, so we aren't leaking fds
 // func EnsureResponseFinalized(httpResp *Response) {
 // 	runtime.SetFinalizer(&httpResp, func(httpResponseInt **Response) {
 // 		(*httpResponseInt).RawResponse.Body.Close()
