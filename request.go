@@ -614,7 +614,9 @@ func addHTTPHeaders(ro *RequestOptions, req *http.Request) {
 	if ro.UserAgent != "" {
 		req.Header.Set("User-Agent", ro.UserAgent)
 	} else {
-		req.Header.Set("User-Agent", localUserAgent)
+		if req.Header.Get("User-Agent") == "" {
+			req.Header.Set("User-Agent", localUserAgent)
+		}
 	}
 
 	if ro.Host != "" {
